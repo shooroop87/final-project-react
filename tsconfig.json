@@ -1,0 +1,23 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+    "compilerOptions": {
+      
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "module": "NodeNext",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "moduleResolution": "NodeNext",
+    "verbatimModuleSyntax": true,
+    "baseUrl": ".",
+    "paths": {
+      "@data-types/*": ["src/shared/global-types/data-types/*"],
+      "@data-types": ["src/shared/global-types/data-types"]
+    }
+  }
+}

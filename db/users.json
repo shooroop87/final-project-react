@@ -1,0 +1,60 @@
+[
+  {
+    "gender": "male",
+    "id": "user-1",
+    "name": "Владислав",
+    "city": "Владивосток",
+    "age": 30,
+    "mail": "vlad@mail.ru",
+    "password": "Wasd321",
+    "description": "Описание",
+    "incoming": [
+      {
+        "userId": "user-3",
+        "status": "pending"
+      },
+      {
+        "userId": "user-4",
+        "status": "pending"
+      }
+    ],
+    "outgoing": [
+      {
+        "userId": "user-5",
+        "status": "pending"
+      }
+    ],
+    "image": "./#"
+  },
+  {
+    "gender": "female",
+    "id": "user-2",
+    "name": "Екатерина",
+    "city": "Москва",
+    "age": 24,
+    "mail": "katya@mail.ru",
+    "password": "Qwerty123!",
+    "description": "Описание",
+    "incoming": [
+      {
+        "userId": "user-0",
+        "status": "pending"
+      }
+    ],
+    "outgoing": [
+      {
+        "userId": "user-12",
+        "status": "pending"
+      },
+      {
+        "userId": "user-20",
+        "status": "pending"
+      },
+      {
+        "userId": "user-28",
+        "status": "pending"
+      }
+    ],
+    "image": "./#"
+  }
+]

@@ -1,0 +1,29 @@
+.profile-menu__list {
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+  width: 244px;
+  height: 272px;
+}
+
+.profile-menu__item {
+  display: flex;
+  flex-direction: row;
+  column-gap: 12px;
+  border-radius: 12px;
+  padding: 12px 20px;
+  width: 244px;
+  height: 48px;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 150%;
+  letter-spacing: 0.02em;
+}
+
+.profile-menu__item:hover {
+  color: var(--interaction-color);
+}
+
+.active {
+  background-color: var(--button-hover-color);
+}

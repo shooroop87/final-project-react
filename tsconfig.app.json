@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"],
+      "@app/*": ["src/app/*"],
+      "@widgets/*": ["src/widgets/*"],
+      "@ui/*": ["src/shared/ui/*"],
+      "@svg/*": ["src/assets/svg/*"],
+      "@data-types/*": ["src/shared/global-types/data-types/*"],
+      "@data-types": ["src/shared/global-types/data-types"]
+    },
+    "types": ["vite/client", "node"],
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+    "esModuleInterop": true,
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "vite-env.d.ts",
+  ],
+}

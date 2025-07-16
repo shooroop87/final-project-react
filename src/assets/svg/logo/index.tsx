@@ -1,0 +1,1 @@
+export { LogoVG } from './logo';
