@@ -9,6 +9,8 @@
   position: relative;
   flex-grow: 1;
   width: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .input {
@@ -19,6 +21,7 @@
   border-radius: 12px;
   padding: 12px;
   padding-left: 44px;
+  padding-right: 44px; /* Добавляем отступ справа для кнопки очистки */
   font-size: 16px;
   caret-color: var(--interaction-color);
 }
@@ -31,19 +34,18 @@
   outline: none;
 }
 
-.search_icon {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  cursor: pointer;
-}
-
 .clear_button {
   position: absolute;
-  top: 12px;
+  top: 50%;
   right: 12px;
+  transform: translateY(-50%);
   background: none;
+  border: none;
   cursor: pointer;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Стили для выпадающего списка */
@@ -130,4 +132,13 @@
 
 .dropdown::-webkit-scrollbar-thumb:hover {
   background: var(--caption-redesigned);
+}
+
+.search_icon {
+  position: absolute;
+  top: 28px;
+  left: 12px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  z-index: 2;
 }
