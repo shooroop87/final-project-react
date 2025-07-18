@@ -1,3 +1,4 @@
+// src/shared/ui/userCardUI/types.ts
 import type { TCard } from '@/shared/global-types';
 
 export interface skill {
@@ -9,5 +10,4 @@ export interface UserCardUIProps {
   setLike: () => void;
   card: TCard;
   type: 'full' | 'short';
-  isAuthenticated?: boolean; // добавил новый проп
 }

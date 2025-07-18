@@ -38,7 +38,9 @@ export const SkillPage: FC = () => {
           <span>{card.teachSkill[0].subType} / </span> <span>{card.teachSkill[0].title}</span>
         </ButtonUI>
         <div className={styles.skill_content}>
+          {/* UserCard теперь не требует проверки авторизации */}
           <UserCard card={card} type='full' />
+          {/* Только SkillCard проверяет авторизацию для функционала обмена */}
           <SkillCard 
             card={card} 
             type='offer' 
