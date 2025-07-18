@@ -11,9 +11,18 @@ import { ProfilePage } from '@/pages/profile-page';
 import { ProfileIncoming } from '@/pages/profile-incoming-page';
 import { ProfileOutgoing } from '@/pages/profile-outgoing-page';
 import { AppHeader } from '@/widgets/app-header';
+import { getCards, getCategories, getCities } from '@/services/slices';
+import { useEffect } from 'react';
+import { useDispatch } from '@/services/store';
 
 function App() {
   // решил скопировать работу модалок из бургерной :)
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getCategories());
+    dispatch(getCities());
+    dispatch(getCards());
+  }, [dispatch]);
 
   const location = useLocation();
   const state = location.state as { backgroundLocation?: Location };
@@ -27,8 +36,8 @@ function App() {
         <Route path='/' element={<Main />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
-        <Route path='/register/about' element={<RegisterAboutYou />} />
-        <Route path='/register/offer' element={<RegisterYouOffer />} />
+        <Route path='/register/about' element={<RegisterAboutYou setCurrentPage={() => {}} />} />
+        <Route path='/register/offer' element={<RegisterYouOffer setCurrentPage={() => {}} />} />
         <Route path='*' element={<Error404 />} />
         <Route path='/skill/:userId' element={<SkillPage />} />
         <Route path='/profile' element={<ProfilePage />} />

@@ -28,13 +28,13 @@ export type SubFilterTypeMap = {
   other: OtherSubType; // если есть
 };
 
-export type genderType = null | 'male' | 'female';
+export type genderType =  'male' | 'female'; // Надо поменять на "none", поправить функции фильтрации и стор из за этого
 
-export type educationType = null | 'teach' | 'learn';
+export type educationType = 'teach' | 'learn';
 
 export type commonFilterType = {
   title: string;
-  value: genderType | educationType;
+  value: genderType | educationType | 'empty';
   status: boolean;
 };
 
@@ -68,6 +68,12 @@ export type offerStatus = 'pending' | 'rejected' | 'fulfilled';
 export interface offerSkillType {
   userId: string;
   status: offerStatus;
+  createdAt: number;
+}
+
+export type TImage = {
+  link: string;
+  name?: string;
 }
 
 // тип Карточки пользователя
@@ -86,6 +92,7 @@ export interface TCard {
   createdAt: number;
   likes: string[];
   src: string;
+  skillImages?: TImage[];
 }
 
 // тип профиля юзера
