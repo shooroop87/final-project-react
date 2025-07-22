@@ -1,4 +1,4 @@
-import { fetchCardsData } from '@/api';
+import { fetchCardsData, postCard } from '@/api';
 import type { TCard } from '@/shared/global-types';
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
@@ -18,12 +18,24 @@ const initialState: TInitialState = {
   error: null,
 };
 
+export const postCardThunk = createAsyncThunk(
+  'postCard',
+  async (cardData: Omit<TCard, 'id'>, thunkAPI) => {
+    try {
+      const res = await postCard(cardData);
+      return res;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(`Ошибка при добавлении карточки: ${error}`);
+    }
+  }
+);
+
 const cardsSlice = createSlice({
   name: 'cards',
   initialState,
   selectors: {
     getCardsState: (state) => state.cards,
-    getLoadingState: (state) => state.loading,
+    getCardsLoadingState: (state) => state.loading,
   },
   reducers: {
     removeCard: (state, action: PayloadAction<string>) => {
@@ -92,10 +104,23 @@ const cardsSlice = createSlice({
         state.cards = action.payload;
         state.loading = false;
         state.error = null;
+      })
+      .addCase(postCardThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(postCardThunk.fulfilled, (state, action: PayloadAction<TCard>) => {
+        state.cards.push(action.payload);
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(postCardThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });
 
-export const { getCardsState, getLoadingState } = cardsSlice.selectors;
+export const { getCardsState, getCardsLoadingState } = cardsSlice.selectors;
 export const { addCard, changeCard, removeCard } = cardsSlice.actions;
 export default cardsSlice.reducer;

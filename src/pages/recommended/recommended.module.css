@@ -1,0 +1,50 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  row-gap: 40px;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 20px 36px;
+  margin-top: 104px;
+}
+
+.menu {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.menu__btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--accent-background);
+  border-radius: 12px;
+  padding: 12px 26px;
+  background-color: var(--accent-background);
+  transition: border 0.3s ease;
+  cursor: pointer;
+}
+
+.menu__btn:hover {
+  border-color: rgba(37, 48, 23, 0.75);
+  color: rgba(37, 48, 23, 0.75);
+}
+
+.menu__btn:active {
+  border-color: inherit;
+  color: inherit;
+}
+
+.chevron {
+  transform: rotate(180deg);
+}
+
+.card-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  justify-content: space-around;
+  gap: 20px;
+}

@@ -49,15 +49,20 @@ export const AppHeaderUI = forwardRef<HTMLElement, TAppHeaderUIProps>(
               >
                 <MoonSVG />
               </ButtonUI>
-              {user ? (
+              {user.id != '' ? (
                 <div className={styles.header_logged_in}>
                   <div className={styles.icons}>
-                    <ButtonUI type='button' onClick={onNotificationClick} className={styles.button}>
-                      <NotificationSVG />
-                    </ButtonUI>
-                    <ButtonUI type='button' onClick={onLikeClick} className={styles.button}>
-                      <LikeSVG />
-                    </ButtonUI>
+                    {/* Условный рендеринг для опциональных пропсов */}
+                    {onNotificationClick && (
+                      <ButtonUI type='button' onClick={onNotificationClick} className={styles.button}>
+                        <NotificationSVG />
+                      </ButtonUI>
+                    )}
+                    {onLikeClick && (
+                      <ButtonUI type='button' onClick={onLikeClick} className={styles.button}>
+                        <LikeSVG />
+                      </ButtonUI>
+                    )}
                   </div>
                   <ButtonUI type='link' className={styles.button} to='/profile'>
                     <p>{user.name}</p>

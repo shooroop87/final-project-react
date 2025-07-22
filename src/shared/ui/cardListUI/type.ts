@@ -1,9 +1,11 @@
-import type { TCard } from '@/shared/global-types';
+import type { SortType, TCard, TUser } from '@/shared/global-types';
 
 export interface CardListProps {
   cards: TCard[];
   title: string;
-  handleOpen?: () => void;
+  handleOpen?: string;
   handleSort?: () => void;
+  sortType?: SortType;
   loading?: boolean;
+  user: TUser;
 }

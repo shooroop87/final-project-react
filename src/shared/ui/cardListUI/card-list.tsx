@@ -12,7 +12,9 @@ export const CardListUI: FC<CardListProps> = ({
   cards,
   handleOpen,
   handleSort,
+  sortType,
   loading,
+  user,
 }) => {
   return (
     <div className={styles.list}>
@@ -20,19 +22,21 @@ export const CardListUI: FC<CardListProps> = ({
       <div className={styles.description}>
         <h3 className={styles.title}>{title}</h3>
         {handleOpen && (
-          <ButtonUI className={styles.button} type='button' onClick={handleOpen}>
+          <ButtonUI className={styles.button} type='link' to={handleOpen}>
             <span className={styles.button_text}>Смотреть все</span>
-            <div className={styles.button_image}>
-              <ChevronRightSVG />
-            </div>
+            <span className={styles.button_image}>
+              <ChevronRightSVG color='currentColor' />
+            </span>
           </ButtonUI>
         )}
         {handleSort && (
           <ButtonUI className={styles.button} type='button' onClick={handleSort}>
-            <div className={styles.button_image}>
-              <SortSVG />
-            </div>
-            <span className={styles.button_text}>Сначала новые</span>
+            <span className={styles.button_image}>
+              <SortSVG color='currentColor' />
+            </span>
+            <span className={styles.button_text}>
+              {sortType === 'newest' ? 'Сначала старые' : 'Сначала новые'}
+            </span>
           </ButtonUI>
         )}
       </div>
@@ -41,7 +45,7 @@ export const CardListUI: FC<CardListProps> = ({
       ) : (
         <ul className={styles.container}>
           {cards.map((card, index) => (
-            <UserCard type='short' key={index} card={card} />
+            <UserCard type='short' key={index} card={card}  user={user}/>
           ))}
         </ul>
       )}

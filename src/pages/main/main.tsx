@@ -1,8 +1,8 @@
-import { type FC } from 'react';
+import { useState, type FC } from 'react';
 import styles from './main.module.css';
 import { CardListUI } from '@/shared/ui';
 import { FilterBlock } from '@/widgets';
-import type { commonFilterType, TMainSkillFilter } from '@/shared/global-types';
+import type { commonFilterType, SortType, TMainSkillFilter } from '@/shared/global-types';
 import { useDispatch, useSelector } from '@/services/store';
 import {
   toggleEducationFilter,
@@ -14,9 +14,9 @@ import {
   getSkillsState,
   toggleCityFilter,
   getCardsState,
-  getLoadingState,
+  getCardsLoadingState,
+  selectUserData,
 } from '@/services/slices';
-// import { CARDS_DATA } from '@/shared/global-types/data-cards-example';
 import { EnabledFiltersBlock } from '@/widgets/enabled-filters-block';
 import {
   checkAllActiveFilters,
@@ -28,19 +28,15 @@ import {
 
 export const Main: FC = () => {
   const dispatch = useDispatch();
+  const user = useSelector(selectUserData);
   const educationState = useSelector(getEducationState);
   const genderState = useSelector(getGenderState);
   const skillsState = useSelector(getSkillsState);
   const citiesState = useSelector(getCitiesState);
   const cardsState = useSelector(getCardsState);
-  const loading = useSelector(getLoadingState);
+  const loading = useSelector(getCardsLoadingState);
 
-  // const cards = filterCards(CARDS_DATA, {
-  //   education: educationState,
-  //   gender: genderState,
-  //   skills: skillsState,
-  //   cities: citiesState,
-  // });
+  const [sortType, setSortType] = useState<SortType>('default');
 
   const cards = filterCards(cardsState, {
     education: educationState,
@@ -48,6 +44,8 @@ export const Main: FC = () => {
     skills: skillsState,
     cities: citiesState,
   });
+
+  const sortedCards = sortType === 'newest' ? sortByNewest(cards) : cards;
 
   const checkFiltersState = checkAllActiveFilters(
     skillsState,
@@ -78,11 +76,9 @@ export const Main: FC = () => {
     dispatch(toggleCityFilter(data));
   };
 
-  // Веременно оставлю тут массивы карточек для отображения
-
-  // const cardsPopular = sortByPopular(CARDS_DATA, 3);
-  // const cardsNew = sortByNewest(CARDS_DATA, 3);
-  // const cardsRecommendedChaos = sorByRecommendedChaos(CARDS_DATA);
+  const sortCards = () => {
+    setSortType(sortType === 'newest' ? 'default' : 'newest');
+  };
 
   const cardsPopular = sortByPopular(cardsState, 3);
   const cardsNew = sortByNewest(cardsState, 3);
@@ -126,7 +122,7 @@ export const Main: FC = () => {
 
   return (
     <main className={styles.main}>
-      <div>
+      <div className={styles.filter_block}>
         <FilterBlock
           educationFilters={educationState}
           cityFilters={citiesState}
@@ -139,31 +135,66 @@ export const Main: FC = () => {
           activeFiltersCount={activeFilters.length}
         />
       </div>
-      {checkFiltersState ? (
-        <div className={styles.card_blocks}>
-          {activeFilters.length > 0 && <EnabledFiltersBlock filters={activeFilters} />}
-          {cards.length > 0 ? (
+
+      <div className={styles.card_blocks}>
+        {checkFiltersState ? (
+          <>
+            {activeFilters.length > 0 && <EnabledFiltersBlock filters={activeFilters} />}
+            {cards.length > 0 ? (
+              <CardListUI
+                title={`Подходящие предложения: ${cards.length}`}
+                handleSort={sortCards}
+                sortType={sortType}
+                cards={sortedCards}
+                user={user}
+              />
+            ) : (
+              <h2 className={styles.noResultsTitle}>Ничего не найдено по вашему запросу</h2>
+            )}
+          </>
+        ) : user.id ? (
+          <>
             <CardListUI
-              title={`Подходящие предложения: ${cards.length}`}
-              handleSort={() => {}} // пока заглушка
-              cards={cards}
+              title='Точное совпадение'
+              handleOpen='/popular'
+              cards={cardsPopular}
+              loading={loading}
+              user={user}
             />
-          ) : (
-            <h2 className={styles.noResultsTitle}>Ничего не найдено по вашему запросу</h2>
-          )}
-        </div>
-      ) : (
-        <div className={styles.card_blocks}>
-          <CardListUI
-            title='Популярное'
-            handleOpen={() => {}}
-            cards={cardsPopular}
-            loading={loading}
-          />
-          <CardListUI title='Новое' handleOpen={() => {}} cards={cardsNew} loading={loading} />
-          <CardListUI title='Рекомендуем' cards={cardsRecommendedChaos} loading={loading} />
-        </div>
-      )}
+            <CardListUI
+              title='Новые идеи'
+              handleOpen='/newest'
+              cards={cardsNew}
+              loading={loading}
+              user={user}
+            />
+          </>
+        ) : (
+          <>
+            <CardListUI
+              title='Популярное'
+              handleOpen='/popular'
+              cards={cardsPopular}
+              loading={loading}
+              user={user}
+            />
+            <CardListUI
+              title='Новое'
+              handleOpen='/newest'
+              cards={cardsNew}
+              loading={loading}
+              user={user}
+            />
+          </>
+        )}
+        <CardListUI
+          title='Рекомендуем'
+          handleOpen='/recommended'
+          cards={cardsRecommendedChaos}
+          loading={loading}
+          user={user}
+        />
+      </div>
     </main>
   );
 };

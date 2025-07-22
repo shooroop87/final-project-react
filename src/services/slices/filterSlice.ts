@@ -1,7 +1,5 @@
 import { fetchCategoriesData, fetchCitiesData } from '@/api';
 import type { commonFilterType, TCityFilter, TMainSkillFilter } from '@/shared/global-types';
-// import { CITIES_MOCK } from '@/shared/global-types/data-cities-examples';
-// import { MAIN_FILTERS_MOCK } from '@/shared/global-types/data-filters-examples';
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 export type FilterState = {
@@ -109,13 +107,13 @@ export const filterSlice = createSlice({
     removeEducationFilter: (state) => {
       state.education = state.education.map((item) => ({
         ...item,
-        status: item.value === null,
+        status: item.value === 'empty',
       }));
     },
     removeGenderFilter: (state) => {
       state.gender = state.gender.map((item) => ({
         ...item,
-        status: item.value === null,
+        status: item.value === 'empty',
       }));
     },
     removeSkillsFilter: (state, action: PayloadAction<string>) => {

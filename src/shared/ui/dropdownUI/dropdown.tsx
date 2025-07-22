@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type { DropdownUIProps } from './type';
 import styles from './dropdown.module.css';
 import { InputUI } from '../inputUI';
-import { ChevronDownSVG, ShevronUpSVG } from '@/assets/svg';
+import { ChevronDownSVG, ChevronUpSVG } from '@/assets/svg';
 
 // value = выбранная опция или список опций
 // withFilter = текстовый фильтра
@@ -12,13 +12,13 @@ import { ChevronDownSVG, ShevronUpSVG } from '@/assets/svg';
 //            в DropdownUI. Функция получает актуальное значение filter, для
 //            фильтрации списка опций родителем. Функция должна возвращать ReactNode,
 //            который отрендеритсят внутри дропдауна. 
-export const DropdownUI = ({
-    value, 
-    withFilter, 
-    isMultiSelect, 
-    placeholder, 
-    children,
-  }: DropdownUIProps) => {
+export const DropdownUI = <T,D>({
+  value, 
+  withFilter, 
+  isMultiSelect, 
+  placeholder, 
+  children,
+}: DropdownUIProps<T, D>) => {
   const [isOpen, setIsOpen] = useState(false);
   const [filter, setFilter] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -73,7 +73,7 @@ export const DropdownUI = ({
           aria-label='Открыть или закрыть список'
           aria-pressed={isOpen ? true : false} 
         >
-          {isOpen ? <ShevronUpSVG /> : <ChevronDownSVG />}
+          {isOpen ? <ChevronUpSVG /> : <ChevronDownSVG />}
         </button>
         {withFilter ? (
           isOpen ? (

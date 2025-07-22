@@ -4,9 +4,16 @@ import { useLocation } from 'react-router-dom';
 import { AppHeaderUI } from '@/shared/ui/app-headerUI/app-header';
 import { AllSkills } from '@/shared/ui';
 import { useDispatch, useSelector } from 'react-redux';
-import { getSkillsState, toggleSkillsFilter } from '@/services/slices';
+import { getSkillsState, selectUserData, toggleSkillsFilter } from '@/services/slices';
 import type { TMainSkillFilter } from '@/shared/global-types';
-import type { SearchSuggestion } from '@/shared/ui/search-fieldUI/type';
+
+// Определяю тип SearchSuggestion локально, чтобы избежать проблем с импортами
+interface SearchSuggestion {
+  id: string;
+  title: string;
+  type: 'category' | 'skill';
+  categoryType?: string;
+}
 
 export const AppHeader: FC = () => {
   const dispatch = useDispatch();
@@ -17,11 +24,12 @@ export const AppHeader: FC = () => {
   const isLoginOrRegister = ['/login', '/register'].includes(currentPath);
 
   // TODO найти пользователя как добавят селектор в слайс юзера
-  const user = {
-    name: 'Мария',
-    image:
-      'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  };
+  // const user = useSelector(userSelectors.userDataSelector);
+
+  // TODO Для проверки
+  // const user = USERS_DATA[7];
+  const user = useSelector(selectUserData);
+  
 
   const headerRef = useRef<HTMLElement>(null);
   const [isAllSkillsVisible, setIsAllSkillsVisible] = useState(false);
@@ -40,13 +48,11 @@ export const AppHeader: FC = () => {
 
   const handleClearSearch = () => {
     // Сбрасываем все фильтры при очистке поиска
-    // Можно добавить отдельный экшен для сброса только поиска
-    console.log('Очистка поиска');
+    // TODO: Добавить логику сброса поиска
   };
 
   const handleSearch = (suggestion: SearchSuggestion) => {
     // Обрабатываем выбор из поиска
-    console.log('Выбран элемент поиска:', suggestion);
     
     if (suggestion.type === 'category') {
       // Если выбрана категория, активируем все навыки в этой категории
@@ -75,14 +81,22 @@ export const AppHeader: FC = () => {
     }
   };
 
+  const handleNotificationClick = () => {
+    // TODO: Добавить логику обработки уведомлений
+  };
+
+  const handleLikeClick = () => {
+    // TODO: Добавить логику обработки лайков
+  };
+
   return (
     <>
       <header ref={headerRef}>
         <AppHeaderUI
           onSkillsClick={toggleAllSkills}
           onToggleTheme={() => {}}
-          onNotificationClick={() => {}}
-          onLikeClick={() => {}}
+          onNotificationClick={handleNotificationClick}
+          onLikeClick={handleLikeClick}
           onClearButtonClick={handleClearSearch}
           onSearch={handleSearch}
           user={user}

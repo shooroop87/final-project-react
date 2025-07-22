@@ -1,7 +1,7 @@
-// src/widgets/userCard/type.ts
-import type { TCard } from '@/shared/global-types';
+import type { TCard, TUser } from '@/shared/global-types';
 
 export interface UserCardProps {
-    card: TCard;
-    type: 'short' | 'full';
+  card: TCard;
+  type: 'short' | 'full';
+  user: TUser;
 }
