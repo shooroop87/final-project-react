@@ -13,15 +13,21 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { ButtonUI } from '../buttonUI';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout, selectUserData, getOffersSent, getOffersReceived, getLikedCards } from '@/services/slices';
+import { 
+  logout, 
+  // selectUserData, 
+  getOffersSent, 
+  getOffersReceived, 
+  getLikedCards 
+} from '@/services/slices';
 
 export const ProfileMenu = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
   
-  // Получаем данные для счетчиков из Redux store
-  const user = useSelector(selectUserData);
+  // Получаю данные для счетчиков из Redux store
+  // const user = useSelector(selectUserData);
   const outgoingOffers = useSelector(getOffersSent);
   const incomingOffers = useSelector(getOffersReceived);
   const likedCards = useSelector(getLikedCards);

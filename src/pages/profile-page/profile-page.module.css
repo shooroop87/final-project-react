@@ -98,122 +98,58 @@
   height: 991px;
 }
 
-.profile-menu__list {
-  display: flex;
-  flex-direction: column;
-  row-gap: 8px;
-  width: 244px;
-  height: 272px;
-}
-
-.profile-menu__item {
-  display: flex;
-  flex-direction: row;
-  column-gap: 12px;
-  border-radius: 12px;
-  padding: 12px 20px;
-  width: 244px;
-  height: 48px;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 150%;
-  letter-spacing: 0.02em;
-  position: relative;
-}
-
-.profile-menu__item:hover {
-  color: var(--interaction-color);
-}
-
-.active {
-  background-color: var(--button-hover-color);
-}
-
-.button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-  color: inherit;
-  flex: 1;
-}
-
-/* Стили для счетчиков */
-.counter {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 2px 6px;
-  background-color: var(--accent-redesigned);
-  color: var(--text-redesigned);
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1;
-  margin-left: auto;
-}
-
-.applications_container {
+.form_section {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  width: 100%;
-  height: 100%;
+  width: 460px;
 }
 
-.applications_title {
+.photo_section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 300px;
+}
+
+.section_title {
   font-family: 'Jost', sans-serif;
   font-weight: 500;
   font-size: 24px;
   line-height: 117%;
   letter-spacing: -0.01em;
+  color: var(--text-redesigned);
   margin: 0;
 }
 
-.cards_grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
-  width: 100%;
+.section_subtitle {
+  font-family: 'Jost', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 120%;
+  letter-spacing: -0.01em;
+  color: var(--text-redesigned);
+  margin: 0;
+  text-align: center;
 }
 
-.empty_state {
+.action_buttons {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   gap: 12px;
-  padding: 60px 20px;
-  text-align: center;
-  color: var(--caption-redesigned);
-  background-color: var(--white-redesigned);
-  border-radius: 12px;
-  border: 1px dashed var(--disabled-redesigned);
+  width: 100%;
+  max-width: 280px;
 }
 
-.empty_state p {
-  margin: 0;
-  font-size: 16px;
-  line-height: 150%;
-}
-
-.empty_state p:first-child {
-  font-weight: 500;
-  color: var(--text-redesigned);
-}
-
-/* Стили для кнопок редактирования профиля */
 .edit_buttons {
   display: flex;
+  flex-direction: column;
   gap: 12px;
   width: 100%;
 }
 
-.save-btn,
-.cancel-btn,
-.edit-btn {
+.button {
   padding: 12px 24px;
   border-radius: 12px;
   font-size: 16px;
@@ -221,6 +157,11 @@
   cursor: pointer;
   transition: all 0.3s ease;
   border: 1px solid;
+  text-align: center;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .save-btn {
@@ -229,9 +170,16 @@
   color: var(--text-redesigned);
 }
 
-.save-btn:hover {
+.save-btn:hover:not(:disabled) {
   background-color: var(--button-hover-color);
   border-color: var(--button-hover-color);
+}
+
+.save-btn:disabled {
+  background-color: var(--disabled-redesigned);
+  border-color: var(--disabled-redesigned);
+  color: var(--caption-redesigned);
+  cursor: not-allowed;
 }
 
 .cancel-btn {
@@ -240,7 +188,7 @@
   color: var(--caption-redesigned);
 }
 
-.cancel-btn:hover {
+.cancel-btn:hover:not(:disabled) {
   background-color: var(--disabled-redesigned);
   border-color: var(--disabled-redesigned);
 }
@@ -249,7 +197,6 @@
   background-color: var(--accent-background);
   border-color: var(--accent-redesigned);
   color: var(--text-redesigned);
-  width: 100%;
 }
 
 .edit-btn:hover {
@@ -257,13 +204,67 @@
   border-color: var(--button-hover-color);
 }
 
-/* Адаптивность для мобильных устройств */
-@media (max-width: 768px) {
-  .cards_grid {
-    grid-template-columns: 1fr;
+.error_message {
+  color: var(--error-color, #ff4444);
+  font-size: 14px;
+  text-align: center;
+  padding: 12px 16px;
+  background-color: rgba(255, 68, 68, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 68, 68, 0.3);
+  width: 100%;
+  max-width: 280px;
+}
+
+.unsaved_warning {
+  color: var(--warning-color, #ff8800);
+  font-size: 14px;
+  text-align: center;
+  padding: 8px 12px;
+  background-color: rgba(255, 136, 0, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 136, 0, 0.3);
+  width: 100%;
+  max-width: 280px;
+}
+
+/* Обновленные стили для главного контейнера */
+.profile__column-main--gap {
+  gap: 60px;
+  align-items: flex-start;
+}
+
+/* Адаптивность */
+@media (max-width: 1200px) {
+  .profile__column-main--gap {
+    flex-direction: column;
+    gap: 40px;
+    align-items: center;
   }
   
+  .form_section {
+    width: 100%;
+    max-width: 460px;
+  }
+  
+  .photo_section {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 768px) {
   .edit_buttons {
     flex-direction: column;
+  }
+  
+  .form_section {
+    width: 100%;
+    padding: 0 20px;
+  }
+  
+  .photo_section {
+    width: 100%;
+    padding: 0 20px;
   }
 }

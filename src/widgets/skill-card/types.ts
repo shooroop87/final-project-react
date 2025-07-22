@@ -1,4 +1,3 @@
-// src/widgets/skill-card/types.ts
 import type { TCard } from '@/shared/global-types';
 import type { ReactNode } from 'react';
 
@@ -7,7 +6,6 @@ export type TSkillCardProps = {
   type: 'edit' | 'received' | 'sent' | 'offer';
   likes?: string[];
   likeHandler: () => void;
-  isAuthenticated?: boolean;
 };
 
 export type TSkillCardMenuProps = {
