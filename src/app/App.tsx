@@ -10,6 +10,7 @@ import { Footer } from '@/shared/ui/footer';
 import { ProfilePage } from '@/pages/profile-page';
 import { ProfileIncoming } from '@/pages/profile-incoming-page';
 import { ProfileOutgoing } from '@/pages/profile-outgoing-page';
+import { ProfileFavorites } from '@/pages/profile-favorites-page';
 import { AppHeader } from '@/widgets/app-header';
 import { checkAuthThunk, getCards, getCategories, getCities } from '@/services/slices';
 import { useEffect } from 'react';
@@ -55,6 +56,7 @@ function App() {
         <Route path='/popular' element={<Popular cards={cardsPopular} />} />
         <Route path='/newest' element={<Newest cards={cardsNew} />} />
         <Route path='/recommended' element={<Recommended cards={cardsState} />} />
+        <Route path='/profile/favorites' element={<ProfileFavorites />} />
         {/* сюда добавляйте компоненты для тестирования */}
         <Route path='/test' element={<Test />} />
       </Routes>

@@ -1,4 +1,3 @@
-// src/services/slices/userSlice.ts
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { TCard, TUser } from '@/shared/global-types';
 import {
@@ -9,8 +8,8 @@ import {
   postLikeCard,
   postSaveLikedCard,
   registerUser,
-  editUserData, // Добавляем импорт
 } from '@/api/skill-swap-api';
+import { USERS_DATA } from '@/shared/global-types/data-users-example';
 
 interface UserState {
   user: TUser;
@@ -18,34 +17,64 @@ interface UserState {
   registrationData: Partial<TUser & TCard>;
   errorMessage: string | null;
   registrationError: boolean;
-  loading: boolean; // Добавляем для индикации загрузки
 }
 
+// Пустой пользователь для логаута
+const defaultUser: TUser = {
+  id: '',
+  gender: 'male',
+  userId: '',
+  name: '',
+  city: 'Город',
+  age: 0,
+  mail: '',
+  password: '',
+  description: '',
+  fullDescription: '',
+  incoming: [],
+  outgoing: [],
+  image: '/#',
+  likes: [],
+};
+
+// Тестовый пользователь с заполненными данными (для разработки)
 const initialState: UserState = {
   user: {
-    id: '',
-    gender: 'male',
-    userId: '',
-    name: '',
-    city: 'Город',
-    age: 0,
-    mail: '',
-    password: '',
-    description: '',
-    fullDescription: '',
-    incoming: [],
-    outgoing: [],
-    image: '/#',
-    likes: [],
+    ...USERS_DATA[0], // Берем первого пользователя из тестовых данных
+    likes: ['card-2', 'card-5', 'card-8'], // Добавляем тестовые лайки
+    incoming: [
+      {
+        userId: 'user-3',
+        status: 'pending',
+        createdAt: Date.now() - 86400000, // 1 день назад
+      },
+      {
+        userId: 'user-7',
+        status: 'fulfilled', 
+        createdAt: Date.now() - 172800000, // 2 дня назад
+      }
+    ],
+    outgoing: [
+      {
+        userId: 'user-12',
+        status: 'pending',
+        createdAt: Date.now() - 43200000, // 12 часов назад
+      },
+      {
+        userId: 'user-15',
+        status: 'rejected',
+        createdAt: Date.now() - 259200000, // 3 дня назад
+      }
+    ]
   },
-  isAuth: false,
+  isAuth: true, // Сразу авторизован для разработки
   registrationData: {},
   errorMessage: null,
   registrationError: false,
-  loading: false,
 };
 
-// Existing thunks...
+// Thunks
+
 export const registerUserThunk = createAsyncThunk<TUser, TUser, { rejectValue: string }>(
   'registerUserThunk',
   async (userData, { rejectWithValue }) => {
@@ -80,7 +109,7 @@ export const checkAuthThunk = createAsyncThunk<TUser, void, { rejectValue: strin
     try {
       const user = await checkUserAuth();
       if (!user) {
-        return rejectWithValue('Пользователь не авторизован');
+        return rejectWithValue('Неверный email или пароль');
       }
       return user;
     } catch (error) {
@@ -102,20 +131,6 @@ export const checkUserExist = createAsyncThunk<
     return true;
   } catch (error) {
     return rejectWithValue(`Ошибка при проверке пользователя: ${error}`);
-  }
-});
-
-// Новый thunk для редактирования данных пользователя
-export const editUserDataThunk = createAsyncThunk<
-  TUser,
-  { userData: Omit<TUser, 'id'>; userId: string },
-  { rejectValue: string }
->('user/editUserData', async ({ userData, userId }, { rejectWithValue }) => {
-  try {
-    const updatedUser = await editUserData(userData, userId);
-    return updatedUser;
-  } catch (error) {
-    return rejectWithValue(`Ошибка при обновлении данных пользователя: ${error}`);
   }
 });
 
@@ -157,6 +172,7 @@ export const saveLikedCardThunk = createAsyncThunk<
 });
 
 // Slice
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -171,11 +187,10 @@ const userSlice = createSlice({
     selectError: (state) => state.errorMessage,
     selectRegistrationError: (state) => state.registrationError,
     selectLikes: (state) => state.user?.likes,
-    selectLoading: (state) => state.loading, // Новый селектор для loading
   },
   reducers: {
     logout(state) {
-      state.user = initialState.user;
+      state.user = defaultUser; // Теперь defaultUser определен
       state.isAuth = false;
       localStorage.removeItem('current-user');
     },
@@ -202,84 +217,49 @@ const userSlice = createSlice({
       const { field, value } = action.payload;
       state.user[field] = value;
     },
-    clearError(state) {
-      state.errorMessage = null;
-    },
   },
   extraReducers: (builder) => {
     builder
-      // Login
       .addCase(loginUserThunk.pending, (state) => {
         state.errorMessage = null;
-        state.loading = true;
       })
       .addCase(loginUserThunk.rejected, (state, action) => {
         state.errorMessage = action.payload || 'Что-то пошло не так';
-        state.loading = false;
       })
       .addCase(loginUserThunk.fulfilled, (state, action) => {
         state.user = action.payload;
         state.isAuth = true;
-        state.loading = false;
       })
-      
-      // Register
       .addCase(registerUserThunk.pending, (state) => {
         state.errorMessage = null;
-        state.loading = true;
       })
       .addCase(registerUserThunk.fulfilled, (state, action) => {
         state.user = action.payload;
         state.isAuth = true;
         state.registrationData = {};
-        state.loading = false;
       })
       .addCase(registerUserThunk.rejected, (state, action) => {
         state.errorMessage = action.payload || 'Ошибка регистрации';
-        state.loading = false;
       })
-      
-      // Check Auth
       .addCase(checkAuthThunk.pending, (state) => {
         state.errorMessage = null;
-        state.loading = true;
       })
       .addCase(checkAuthThunk.fulfilled, (state, action) => {
         state.user = action.payload;
         state.isAuth = true;
-        state.loading = false;
       })
       .addCase(checkAuthThunk.rejected, (state, action) => {
         state.errorMessage = action.payload || 'Ошибка авторизации';
-        state.loading = false;
       })
-      
-      // Check User Exist
       .addCase(checkUserExist.fulfilled, (state, action) => {
         state.registrationError = action.payload;
       })
-      .addCase(checkUserExist.pending, (state) => {
-        state.loading = true;
+      .addCase(checkUserExist.pending, () => {
+        // TODO: Добавить обработку pending состояния
       })
-      .addCase(checkUserExist.rejected, (state) => {
-        state.loading = false;
+      .addCase(checkUserExist.rejected, () => {
+        // TODO: Добавить обработку ошибки
       })
-      
-      // Edit User Data - НОВЫЙ
-      .addCase(editUserDataThunk.pending, (state) => {
-        state.loading = true;
-        state.errorMessage = null;
-      })
-      .addCase(editUserDataThunk.fulfilled, (state, action) => {
-        state.user = action.payload;
-        state.loading = false;
-      })
-      .addCase(editUserDataThunk.rejected, (state, action) => {
-        state.errorMessage = action.payload || 'Ошибка при обновлении профиля';
-        state.loading = false;
-      })
-      
-      // Save Liked Card
       .addCase(saveLikedCardThunk.fulfilled, (state, action) => {
         state.user.likes = action.payload;
       });
@@ -293,7 +273,6 @@ export const {
   clearRegistrationData,
   toggleLike,
   updateUserField,
-  clearError,
 } = userSlice.actions;
 
 // Selectors
@@ -308,7 +287,6 @@ export const {
   selectUserData,
   selectRegistrationError,
   selectLikes,
-  selectLoading,
 } = userSlice.selectors;
 
 export default userSlice.reducer;
