@@ -9,8 +9,9 @@ import {
   postLikeCard,
   postSaveLikedCard,
   registerUser,
-  editUserData, // Добавляем импорт
+  editUserData,
 } from '@/api/skill-swap-api';
+import { USERS_DATA } from '@/shared/global-types/data-users-example';
 
 interface UserState {
   user: TUser;
@@ -18,11 +19,43 @@ interface UserState {
   registrationData: Partial<TUser & TCard>;
   errorMessage: string | null;
   registrationError: boolean;
-  loading: boolean; // Добавляем для индикации загрузки
+  loading: boolean;
 }
 
+// Тестовый пользователь для разработки
+const testUser: TUser = {
+  ...USERS_DATA[0],
+  likes: ['user-2', 'user-5', 'user-8'],
+  incoming: [
+    {
+      userId: 'user-3',
+      status: 'pending',
+      createdAt: Date.now() - 86400000, // 1 день назад
+    },
+    {
+      userId: 'user-7',
+      status: 'fulfilled', 
+      createdAt: Date.now() - 172800000, // 2 дня назад
+    }
+  ],
+  outgoing: [
+    {
+      userId: 'user-12',
+      status: 'pending',
+      createdAt: Date.now() - 43200000, // 12 часов назад
+    },
+    {
+      userId: 'user-15',
+      status: 'rejected',
+      createdAt: Date.now() - 259200000, // 3 дня назад
+    }
+  ]
+};
+
 const initialState: UserState = {
-  user: {
+  // Для разработки используем тестового пользователя
+  // В продакшене должен быть пустой пользователь
+  user: process.env.NODE_ENV === 'development' ? testUser : {
     id: '',
     gender: 'male',
     userId: '',
@@ -38,7 +71,7 @@ const initialState: UserState = {
     image: '/#',
     likes: [],
   },
-  isAuth: false,
+  isAuth: process.env.NODE_ENV === 'development' ? true : false, // Авторизован для разработки
   registrationData: {},
   errorMessage: null,
   registrationError: false,
@@ -105,7 +138,6 @@ export const checkUserExist = createAsyncThunk<
   }
 });
 
-// Новый thunk для редактирования данных пользователя
 export const editUserDataThunk = createAsyncThunk<
   TUser,
   { userData: Omit<TUser, 'id'>; userId: string },
@@ -171,7 +203,7 @@ const userSlice = createSlice({
     selectError: (state) => state.errorMessage,
     selectRegistrationError: (state) => state.registrationError,
     selectLikes: (state) => state.user?.likes,
-    selectLoading: (state) => state.loading, // Новый селектор для loading
+    selectLoading: (state) => state.loading,
   },
   reducers: {
     logout(state) {
@@ -204,6 +236,11 @@ const userSlice = createSlice({
     },
     clearError(state) {
       state.errorMessage = null;
+    },
+    // Добавляем экшен для установки тестового пользователя
+    setTestUser(state) {
+      state.user = testUser;
+      state.isAuth = true;
     },
   },
   extraReducers: (builder) => {
@@ -265,7 +302,7 @@ const userSlice = createSlice({
         state.loading = false;
       })
       
-      // Edit User Data - НОВЫЙ
+      // Edit User Data
       .addCase(editUserDataThunk.pending, (state) => {
         state.loading = true;
         state.errorMessage = null;
@@ -294,6 +331,7 @@ export const {
   toggleLike,
   updateUserField,
   clearError,
+  setTestUser,
 } = userSlice.actions;
 
 // Selectors

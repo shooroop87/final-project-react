@@ -22,13 +22,19 @@ import { sortByPopular, sortByNewest } from '@/shared/lib/helpers/helpers';
 import type { RootState } from '@/services/store';
 
 function App() {
-  // решил скопировать работу модалок из бургерной :)
   const dispatch = useDispatch();
+  
   useEffect(() => {
+    // Загружаем основные данные приложения
     dispatch(getCategories());
     dispatch(getCities());
     dispatch(getCards());
-    dispatch(checkAuthThunk());
+    
+    // Проверяем авторизацию только в продакшене
+    // В разработке пользователь уже авторизован через initialState
+    if (process.env.NODE_ENV === 'production') {
+      dispatch(checkAuthThunk());
+    }
   }, [dispatch]);
 
   const location = useLocation();

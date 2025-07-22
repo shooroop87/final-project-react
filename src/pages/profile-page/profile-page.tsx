@@ -1,23 +1,43 @@
 // src/pages/profile-page/profile-page.tsx
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from '@/services/store';
 import { ProfileMenu } from '@/shared/ui/profileMenuUI/profileMenu';
 import { ProfileAvatar } from '@/shared/ui/profileAvatar';
-import { ButtonUI } from '@/shared/ui';
+import { ButtonUI, PreloaderUI } from '@/shared/ui';
 import { CITIES_MOCK } from '@/shared/global-types/data-cities-examples';
 import type { TCity } from '@/shared/global-types/data-types';
 import styles from './profile-page.module.css';
 import { ProfileForm } from '@/shared/ui/profileForm';
 import type { DropdownOption } from '@/shared/ui/dropdownUI/type';
 import { EditSVG } from '@/assets/svg';
-import { selectUserData, updateUserField, editUserDataThunk } from '@/services/slices/userSlice';
-import { useState } from 'react';
+import {
+  selectUserData,
+  updateUserField,
+  editUserDataThunk,
+  selectLoading,
+  getIsAuthenticated,
+} from '@/services/slices/userSlice';
+import { Navigate } from 'react-router-dom';
 
 export const ProfilePage = () => {
   const dispatch = useDispatch();
   const user = useSelector(selectUserData);
+  const loading = useSelector(selectLoading);
+  const isAuthenticated = useSelector(getIsAuthenticated);
   const [isEditing, setIsEditing] = useState(false);
-  const [avatar, setAvatar] = useState<string>(user.image);
+  const [avatar, setAvatar] = useState<string>(user.image || '');
+
+  if (!isAuthenticated) {
+    return <Navigate to='/login' replace />;
+  }
+
+  if (loading) {
+    return <PreloaderUI />;
+  }
+
+  if (!user.id && !loading) {
+    return <Navigate to='/login' replace />;
+  }
 
   const cities: DropdownOption<string>[] = useMemo(
     () =>
@@ -32,7 +52,7 @@ export const ProfilePage = () => {
     return (
       cities.find((city) => city.name === user.city) ?? {
         id: '',
-        name: user.city,
+        name: user.city || 'Выберите город',
       }
     );
   }, [user.city, cities]);
@@ -67,25 +87,35 @@ export const ProfilePage = () => {
 
   const handleSaveProfile = async () => {
     try {
-      await dispatch(editUserDataThunk({
-        userData: {
-          name: user.name,
-          age: user.age,
-          mail: user.mail,
-          password: user.password,
-          city: user.city,
-          description: user.description,
-          gender: user.gender,
-          image: avatar,
-          incoming: user.incoming,
-          outgoing: user.outgoing,
-        },
-        userId: user.id
-      })).unwrap();
+      await dispatch(
+        editUserDataThunk({
+          userData: {
+            name: user.name,
+            age: user.age,
+            mail: user.mail,
+            password: user.password,
+            city: user.city,
+            description: user.description || '',
+            gender: user.gender,
+            image: avatar,
+            incoming: user.incoming,
+            outgoing: user.outgoing,
+            userId: user.userId,
+            fullDescription: user.fullDescription,
+            likes: user.likes,
+          },
+          userId: user.id,
+        })
+      ).unwrap();
       setIsEditing(false);
     } catch (error) {
       console.error('Ошибка при сохранении профиля:', error);
     }
+  };
+
+  const handleCancelEdit = () => {
+    setAvatar(user.image || '');
+    setIsEditing(false);
   };
 
   return (
@@ -116,45 +146,66 @@ export const ProfilePage = () => {
 
           <div className={styles.profile__avatar}>
             <ProfileAvatar userAvatar={avatar} />
-            <label htmlFor="avatar-upload" className={styles['change-photo-btn']}>
-              Изменить фото
-              <span className={styles['change-photo-svg']}>
-                <EditSVG />
-              </span>
-              <input
-                id="avatar-upload"
-                type="file"
-                accept="image/*"
-                onChange={handleAvatarChange}
-                style={{ display: 'none' }}
-              />
-            </label>
-            
+
             {isEditing ? (
-              <div className={styles.edit_buttons}>
-                <ButtonUI 
-                  type="button" 
-                  onClick={handleSaveProfile}
-                  className={styles['save-btn']}
-                >
-                  Сохранить
-                </ButtonUI>
-                <ButtonUI 
-                  type="button" 
-                  onClick={() => setIsEditing(false)}
-                  className={styles['cancel-btn']}
-                >
-                  Отмена
-                </ButtonUI>
-              </div>
+              <>
+                <label htmlFor='avatar-upload' className={styles['change-photo-btn']}>
+                  Изменить фото
+                  <span className={styles['change-photo-svg']}>
+                    <EditSVG />
+                  </span>
+                  <input
+                    id='avatar-upload'
+                    type='file'
+                    accept='image/*'
+                    onChange={handleAvatarChange}
+                    style={{ display: 'none' }}
+                  />
+                </label>
+
+                <div className={styles.edit_buttons}>
+                  <ButtonUI
+                    type='button'
+                    onClick={handleSaveProfile}
+                    className={styles['save-btn']}
+                    disabled={loading}
+                  >
+                    {loading ? 'Сохранение...' : 'Сохранить'}
+                  </ButtonUI>
+                  <ButtonUI
+                    type='button'
+                    onClick={handleCancelEdit}
+                    className={styles['cancel-btn']}
+                    disabled={loading}
+                  >
+                    Отмена
+                  </ButtonUI>
+                </div>
+              </>
             ) : (
-              <ButtonUI 
-                type="button" 
-                onClick={() => setIsEditing(true)}
-                className={styles['edit-btn']}
-              >
-                Редактировать профиль
-              </ButtonUI>
+              <>
+                <label htmlFor='avatar-upload-view' className={styles['change-photo-btn']}>
+                  Изменить фото
+                  <span className={styles['change-photo-svg']}>
+                    <EditSVG />
+                  </span>
+                  <input
+                    id='avatar-upload-view'
+                    type='file'
+                    accept='image/*'
+                    onChange={handleAvatarChange}
+                    style={{ display: 'none' }}
+                  />
+                </label>
+
+                <ButtonUI
+                  type='button'
+                  onClick={() => setIsEditing(true)}
+                  className={styles['edit-btn']}
+                >
+                  Редактировать профиль
+                </ButtonUI>
+              </>
             )}
           </div>
         </div>

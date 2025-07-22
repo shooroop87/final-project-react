@@ -13,16 +13,14 @@ import {
   getCardsLoadingState,
   selectLikes,
   selectUserData,
+  getIsAuthenticated, // Используем правильный селектор
 } from '@/services/slices';
 import { filterSameOffers } from '@/shared/lib/helpers/helpers';
-
-// Импортируем селектор для проверки авторизации
-const getIsAuthenticated = (state: any) => state.user?.isAuth || false;
 
 export const SkillPage: FC = () => {
   const location = useLocation();
   const { userId } = useParams();
-  const isAuthenticated = useSelector(getIsAuthenticated);
+  const isAuthenticated = useSelector(getIsAuthenticated); // Исправленный селектор
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -33,13 +31,31 @@ export const SkillPage: FC = () => {
   const cardsState = useSelector(getCardsState);
   const loading = useSelector(getCardsLoadingState);
 
-  console.log(cardsState);
+  console.log('isAuthenticated:', isAuthenticated);
+  console.log('user:', user);
+  console.log('cardsState:', cardsState.length);
 
-  if (cardsState.length === 0) {
+  if (loading || cardsState.length === 0) {
     return <PreloaderUI />;
   }
 
-  const card = cardsState.find((card) => card.userId === userId)!;
+  const card = cardsState.find((card) => card.userId === userId);
+  
+  if (!card) {
+    return (
+      <main className={styles.container}>
+        <ButtonUI type='link' to='/' className={styles.button}>
+          <ArrowLeftSVG color='var(--grey-deep-color)' />
+          <span>Назад к главной</span>
+        </ButtonUI>
+        <div style={{ textAlign: 'center', padding: '40px' }}>
+          <h2>Карточка не найдена</h2>
+          <p>Возможно, карточка была удалена или ссылка неверная</p>
+        </div>
+      </main>
+    );
+  }
+
   const sameOffers = filterSameOffers(card, cardsState);
 
   return (
@@ -47,9 +63,9 @@ export const SkillPage: FC = () => {
       <ButtonUI type='link' to='/' className={styles.button}>
         <ArrowLeftSVG color='var(--grey-deep-color)' />
         <span> Главная / </span>
-        <span>{card.teachSkill[0].type} / </span>
-        <span>{card.teachSkill[0].subType} / </span>
-        <span>{card.teachSkill[0].title}</span>
+        <span>{card.teachSkill[0]?.type} / </span>
+        <span>{card.teachSkill[0]?.subType} / </span>
+        <span>{card.teachSkill[0]?.title}</span>
       </ButtonUI>
 
       <div className={styles.skill_content}>
@@ -60,7 +76,7 @@ export const SkillPage: FC = () => {
           card={card}
           type='offer'
           likeHandler={() => {}}
-          likes={likes}
+          likes={likes || []}
           isAuthenticated={isAuthenticated}
         />
       </div>
